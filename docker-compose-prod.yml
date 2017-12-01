@@ -1,0 +1,53 @@
+version: '2'
+volumes:
+    pgdata:
+services:
+    postgres:
+        restart: always
+        image: postgres:latest
+        ports:
+            - "5432:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data/
+        env_file: .env_prod
+
+    migration:
+        build: ./web
+        image: espenfolke/puremail_migration:latest
+        command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py migrate"
+        env_file: .env_prod
+        volumes:
+            - /usr/src/app
+        links:
+            - postgres
+        depends_on:
+            - postgres
+
+    web:
+        restart: always
+        build: ./web
+        image: espenfolke/puremail_web:latest
+        expose:
+            - "8000"
+        links:
+            - postgres:postgres
+        volumes:
+            - /usr/src/app
+            - /usr/src/app/static
+        env_file: .env_prod
+        command: /usr/local/bin/gunicorn puremail.wsgi:application -w 2 -b :8000
+        depends_on:
+            - postgres
+
+    nginx:
+        restart: always
+        image: espenfolke/puremail_nginx:latest
+        build: ./nginx/
+        ports:
+            - "80:80"
+        volumes:
+            - /www/static
+        volumes_from:
+            - web
+        links:
+            - web:web

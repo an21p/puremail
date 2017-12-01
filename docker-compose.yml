@@ -1,0 +1,52 @@
+version: '2'
+services:
+    postgres:
+        restart: always
+        image: postgres:latest
+        ports:
+            - "5432:5432"
+
+    migration:
+        build:
+            context: ./web
+            dockerfile: Dockerfile_dev
+        image: espenfolke/puremail_migration:dev
+        command: bash -c "python manage.py migrate && python manage.py makemigrations && python manage.py migrate"
+        env_file: .env_dev
+        volumes:
+            - ./web:/usr/src/app
+        links:
+            - postgres
+        depends_on:
+            - postgres
+
+    web:
+        restart: always
+        build:
+            context: ./web
+            dockerfile: Dockerfile_dev
+        image: espenfolke/puremail_web:dev
+        expose:
+            - "8000"
+        links:
+            - postgres:postgres
+        volumes:
+            - ./web:/usr/src/app
+            - /usr/src/app/static
+        env_file: .env_dev
+        command: python manage.py runserver 0.0.0.0:8000
+        depends_on:
+            - postgres
+
+    nginx:
+        restart: always
+        build: ./nginx/
+        image: espenfolke/puremail_nginx:dev
+        ports:
+            - "80:80"
+        volumes:
+            - /www/static
+        volumes_from:
+            - web
+        links:
+            - web:web
