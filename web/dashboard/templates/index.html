@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-3">PureMail</h1>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% include 'includes/bs4_form.html' with form=form %}
+          <button type="submit" id="update_btn" class="btn btn-primary">{{ info.action }}</button>
+        </form>
+      </div>
+    </div>
+{% endblock %}

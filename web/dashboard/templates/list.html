@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Room {{ number }}{% endblock %}
+
+{% block content %}
+    <h1>Parcels for Room {{ number }}</h1>
+    {% if object_list %}
+    <ul class="list-group">
+        {% for parcel in object_list %}
+        <li class="list-group-item">{{ parcel }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No parcels found for this room</p>
+    {% endif %}
+
+{% endblock %}
