@@ -7,9 +7,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Room(models.Model):
     number = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(700)])
-    email = EncryptedEmailField(
-        verbose_name='Email address')
-    subscribed = models.BooleanField(default=False)
+    def __str__(self):
+        return str(self.number)
+
+class Resident(models.Model):
+    email = EncryptedEmailField(verbose_name='Email address')
+
+class Subscriptions(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
+    enabled = models.BooleanField(default=False)
 
 class Parcel(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)

@@ -23,6 +23,20 @@ services:
         depends_on:
             - postgres
 
+    fixture:
+        build: ./web
+        image: espenfolke/puremail_fixture:latest
+        command: bash -c "python manage.py loaddata dashboard/fixtures/rooms.json"
+        env_file: .env_prod
+        volumes:
+            - /usr/src/app
+        links:
+            - postgres
+            - migration
+        depends_on:
+            - postgres
+            - migration
+
     web:
         restart: always
         build: ./web

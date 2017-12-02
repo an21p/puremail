@@ -8,8 +8,8 @@
     <ul class="navbar-nav mr-auto">
       {% if user.is_authenticated %}
           {% if user.is_staff %}
-          <li class="nav-item {% if request.resolver_match.url_name == 'parcel_list' %}active{% endif %}">
-            <a class="nav-link" href="">Parcels</a>
+          <li class="nav-item {% if request.resolver_match.url_name == 'all_parcels' %}active{% endif %}">
+            <a class="nav-link" href="{% url 'all_parcels' %}">Parcels</a>
           </li>
           {% endif %}
       {% endif %}
@@ -17,11 +17,11 @@
     <ul class="navbar-nav">
         {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="{% url "auth_logout" %}">Logout</a>
+          <a class="nav-link" href="{% url 'admin:logout' %}">Logout</a>
         </li>
         {% else %}
-        <li class="nav-item {% if request.resolver_match.url_name == 'auth_login' %}active{% endif %}">
-          <a class="nav-link" href="">Login</a>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'admin:login' %}">Admin Login</a>
         </li>
         {% endif %}
     </ul>

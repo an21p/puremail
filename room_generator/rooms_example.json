@@ -1,0 +1,16 @@
+[
+{
+    "model": "dashboard.room",
+    "pk": 1,
+    "fields": {
+        "number": 1
+    }
+},
+{
+    "model": "dashboard.room",
+    "pk": 2,
+    "fields": {
+        "number": 2
+    }
+}
+]

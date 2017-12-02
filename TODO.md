@@ -1,14 +1,16 @@
 # puremail
 
-- Admin can view list, add, remove, edit
 - Admin can mark as received
 - User can subscribe/unsubscribe for email notifications
 - When adding parcel email notification send (if enabled)
 
 
 # TODO
-1. Parcel delivered date is when added
-2. Parcel received date is when received is pressed
+- Parcel received date is when received is pressed
+- Add email subscription to room
+- once subscribed let session know so not asked to subscribe to another room
+- send emails to all subscribed
+- lock down admin views
 
 
 3. solve the multiple email problem (read below)

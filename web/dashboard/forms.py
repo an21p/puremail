@@ -1,17 +1,18 @@
 import datetime
 
 from django import forms
-from .models import Room, Parcel
+from .models import Room, Parcel, Resident
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-class SearchForm(forms.Form):
-    room_number = forms.ChoiceField(choices=[(x, x) for x in range(1, 700)])
 
 class RoomForm(forms.ModelForm):
     class Meta:
         model = Room
-        fields = ('number', 'email')
-        exclude = ('subscribed',)
+        fields = ('number',)
+
+class ResidentForm(forms.ModelForm):
+    class Meta:
+        model = Resident
+        fields = ('email',)
 
 class ParcelForm(forms.ModelForm):
     class Meta:

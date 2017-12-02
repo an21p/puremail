@@ -1,18 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title %}Room {{ number }}{% endblock %}
+{% block title %}{{ info.name }}{% endblock %}
 
 {% block content %}
-    <h1>Parcels for Room {{ number }}</h1>
+    <h1>{{ info.name }}</h1>
     {% if object_list %}
-    <ul class="list-group">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Room</th>
+          <th scope="col">Sender</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Date Delivered</th>
+          <th scope="col">Date Received</th>
+          {% if user.is_authenticated %}
+              {% if user.is_staff %}
+              <th scope="col">Update</th>
+              <th scope="col">Delete</th>
+              {% endif %}
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
         {% for parcel in object_list %}
-        <li class="list-group-item">{{ parcel }}
-        </li>
+        <tr>
+          <th scope="row">{{ parcel.id }}</th>
+          <td><a href="{% url "room" parcel.room.id %}">{{ parcel.room }}</a></td>
+          <td>{{ parcel.sender }}</td>
+          <td>{{ parcel.quantity }}</td>
+          <td>{{ parcel.date_delivered }}</td>
+          {% if user.is_authenticated %}
+              {% if user.is_staff %}
+                {% if parcel.date_received %}
+                <td>{{ parcel.date_received }}</td>
+                {% else %}
+                <td><a href="" id="received" class="btn btn-success btn-sm">Mark as Received</a></td>
+                {% endif %}
+              <td><a href="{% url 'parcel_update' parcel.id %}" id="update" class="btn btn-primary btn-sm">Update</a></td>
+              <td><a href="{% url 'parcel_delete' parcel.id %}" id="delete" class="btn btn-danger btn-sm">Delete</a></td>
+              {% endif %}
+          {% else %}
+              {% if parcel.date_received %}
+              <td>{{ parcel.date_received }}</td>
+              {% else %}
+              <td>Not Received</td>
+              {% endif %}
+          {% endif %}
+        </tr>
         {% endfor %}
-    </ul>
+      </tbody>
+    </table>
+
     {% else %}
     <p>No parcels found for this room</p>
     {% endif %}
 
+    {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <br>
+          <a href="{% url 'parcel_add' %}" id="add" class="btn btn-primary">Add Parcel</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}
