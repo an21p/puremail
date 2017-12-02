@@ -8,7 +8,9 @@
     <ul class="navbar-nav mr-auto">
       {% if user.is_authenticated %}
           {% if user.is_staff %}
-          <li class="nav-item {% if request.resolver_match.url_name == 'all_parcels' %}active{% endif %}">
+          <li class="nav-item
+          {% if request.resolver_match.url_name == 'all_parcels' %}active{% endif %}
+          {% if request.resolver_match.url_name == 'all_parcels_hide' %}active{% endif %}">
             <a class="nav-link" href="{% url 'all_parcels' %}">Parcels</a>
           </li>
           {% endif %}

@@ -6,12 +6,16 @@
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
         <h1 class="display-3">PureMail</h1>
+
+        <h3>Check if you have mail waiting for you at reception</h3>
+        <br>
         <form method="post">
           {% csrf_token %}
           {% load widget_tweaks %}
           {{ form.media }}
           <div class="form-group">
-            <select class="form-control" name="room_id">
+            <label for="room_id">Room Number</label>
+            <select class="form-control" id="room_id" name="room_id">
             {% for room in rooms %}
                 <option value="{{ room.id }}">{{ room.number }}</option>
             {% endfor %}

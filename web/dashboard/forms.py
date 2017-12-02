@@ -4,15 +4,11 @@ from django import forms
 from .models import Room, Parcel, Resident
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-class RoomForm(forms.ModelForm):
-    class Meta:
-        model = Room
-        fields = ('number',)
+class EmptyForm(forms.Form):
+    pass
 
-class ResidentForm(forms.ModelForm):
-    class Meta:
-        model = Resident
-        fields = ('email',)
+class EmailForm(forms.Form):
+    email = forms.EmailField()
 
 class ParcelForm(forms.ModelForm):
     class Meta:

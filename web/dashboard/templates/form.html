@@ -3,7 +3,7 @@
 {% block title %}{{ info.name }}{% endblock %}
 {% block content %}
 <h2>{{ info.name }}</h2>
-<form method="post" enctype="multipart/form-data">
+<form method="post">
   {% csrf_token %}
   {% include 'includes/bs4_form.html' with form=form %}
   <button type="submit" id="update_btn" class="btn btn-primary">{{ info.action }}</button>

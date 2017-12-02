@@ -4,6 +4,20 @@
 
 {% block content %}
     <h1>{{ info.name }}</h1>
+    {% if request.resolver_match.url_name == 'all_parcels' %}
+    <a href="{% url "all_parcels_hide" %}" class="badge badge-secondary">Hide Received</a>
+    {% endif %}
+    {% if request.resolver_match.url_name == 'all_parcels_hide' %}
+    <a href="{% url "all_parcels" %}" class="badge badge-secondary">Show Received</a>
+    {% endif %}
+    {% if request.resolver_match.url_name == 'room' %}
+    <a href="{% url "room_hide" room.id %}" class="badge badge-secondary">Hide Received</a>
+    {% endif %}
+    {% if request.resolver_match.url_name == 'room_hide' %}
+    <a href="{% url "room" room.id %}" class="badge badge-secondary">Show Received</a>
+    {% endif %}
+    <br>
+    <br>
     {% if object_list %}
     <table class="table">
       <thead>
@@ -34,11 +48,13 @@
               {% if user.is_staff %}
                 {% if parcel.date_received %}
                 <td>{{ parcel.date_received }}</td>
+                <td><a href="" id="update" class="btn btn-primary btn-sm disabled"></a></td>
+                <td><a href="" id="delete" class="btn btn-danger btn-sm disabled"></a></td>
                 {% else %}
-                <td><a href="" id="received" class="btn btn-success btn-sm">Mark as Received</a></td>
+                <td><a href="{% url 'parcel_received' parcel.id %}" id="received" class="btn btn-success btn-sm">Mark as Received</a></td>
+                <td><a href="{% url 'parcel_update' parcel.id %}" id="update" class="btn btn-primary btn-sm">Update</a></td>
+                <td><a href="{% url 'parcel_delete' parcel.id %}" id="delete" class="btn btn-danger btn-sm">Delete</a></td>
                 {% endif %}
-              <td><a href="{% url 'parcel_update' parcel.id %}" id="update" class="btn btn-primary btn-sm">Update</a></td>
-              <td><a href="{% url 'parcel_delete' parcel.id %}" id="delete" class="btn btn-danger btn-sm">Delete</a></td>
               {% endif %}
           {% else %}
               {% if parcel.date_received %}
@@ -60,6 +76,18 @@
         {% if user.is_staff %}
         <br>
           <a href="{% url 'parcel_add' %}" id="add" class="btn btn-primary">Add Parcel</a>
+        {% endif %}
+    {% else %}
+        {% if not info.room %}
+        <form method="post">
+          {% csrf_token %}
+          {% include 'includes/bs4_form.html' with form=form %}
+          <button type="submit" id="update_btn" class="btn btn-primary">{{ info.action }}</button>
+        </form>
+        {% else %}
+        <div class="">
+          Subscribed to Room {{ info.room }}. To unsubscribe find the link in your email.
+        </div>
         {% endif %}
     {% endif %}
 {% endblock %}

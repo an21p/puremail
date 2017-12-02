@@ -1,7 +1,6 @@
 import datetime
 
 from django.db import models
-from pgcrypto import EncryptedEmailField
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Room(models.Model):
@@ -11,12 +10,8 @@ class Room(models.Model):
         return str(self.number)
 
 class Resident(models.Model):
-    email = EncryptedEmailField(verbose_name='Email address')
-
-class Subscriptions(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    resident = models.ForeignKey(Resident, on_delete=models.CASCADE)
-    enabled = models.BooleanField(default=False)
+    email = models.EmailField(verbose_name='Email address', unique=True)
 
 class Parcel(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
