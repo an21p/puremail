@@ -23,6 +23,8 @@ def parcel_call(sender, **kwargs):
 
 # Views
 def index(request, template_name='index.html'):
+    if (request.user.is_authenticated):
+        return redirect('all_parcels')
     if ('resident_email' not in request.session):
         return redirect('resident_login')
     info = {'action':'Search'}
@@ -50,6 +52,13 @@ def resident_login(request, template_name='form.html'):
     return render(request, template_name, {'info':info, 'form':form})
 
 def room(request, pk, template_name='list.html'):
+    if (request.user.is_authenticated):
+        room = get_object_or_404(Room, pk=pk)
+        parcels = reversed(Parcel.objects.filter(room=room))
+        info = {
+            'name':'Room '+str(room.number),
+        }
+        return render(request, template_name, {'object_list':parcels, 'info':info, 'room':room})
     if ('resident_email' not in request.session):
         return redirect('resident_login')
     resident_email = request.session['resident_email']
@@ -76,33 +85,6 @@ def room(request, pk, template_name='list.html'):
     parcels = reversed(Parcel.objects.filter(room=room))
     return render(request, template_name, {'object_list':parcels, 'info':info, 'room':room, 'form':form})
 
-def room_hide(request, pk, template_name='list.html'):
-    if ('resident_email' not in request.session):
-        return redirect('resident_login')
-    resident_email = request.session['resident_email']
-    parcels = []
-    room = get_object_or_404(Room, pk=pk)
-    info = {
-    'name':'Room '+str(room.number),
-    'action':'Subscribe',
-    }
-    form = EmptyForm(request.POST or None)
-    if request.method == 'POST':
-        # save resident
-        if (not Resident.objects.filter(email=resident_email).exists()):
-            resident = Resident(email=resident_email, room=room)
-            resident.save()
-            request.session['room'] = room.number
-            subscription.send(sender='room_hide', resident=resident)
-        else:
-            resident = Resident.objects.filter(email=resident_email)[0]
-            request.session['room'] = resident.room.number
-            info['error'] = 'Already Subscribed to a Room'
-    if ('room' in request.session):
-        info['room'] = request.session['room']
-    parcels = reversed(Parcel.objects.filter(room=room).exclude(date_received__isnull=False))
-    return render(request, template_name, {'object_list':parcels, 'info':info, 'room':room, 'form':form})
-
 def unsubscribe(request, pk, template_name='unsubscribed.html'):
     dpk = decode(pk)
     try:
@@ -124,15 +106,6 @@ def all_parcels(request, template_name='list.html'):
         return redirect('index')
     info = {'name':'All Parcels'}
     parcels = reversed(Parcel.objects.all())
-    return render(request, template_name, {'object_list':parcels, 'info':info})
-
-@login_required(login_url='/admin/login')
-def all_parcels_hide(request, template_name='list.html'):
-    user = request.user
-    if (not user.is_staff):
-        return redirect('index')
-    info = {'name':'All Parcels'}
-    parcels = reversed(Parcel.objects.exclude(date_received__isnull=False))
     return render(request, template_name, {'object_list':parcels, 'info':info})
 
 @login_required(login_url='/admin/login')

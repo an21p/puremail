@@ -4,18 +4,7 @@
 
 {% block content %}
     <h1>{{ info.name }}</h1>
-    {% if request.resolver_match.url_name == 'all_parcels' %}
-    <a href="{% url "all_parcels_hide" %}" class="badge badge-secondary">Hide Received</a>
-    {% endif %}
-    {% if request.resolver_match.url_name == 'all_parcels_hide' %}
-    <a href="{% url "all_parcels" %}" class="badge badge-secondary">Show Received</a>
-    {% endif %}
-    {% if request.resolver_match.url_name == 'room' %}
-    <a href="{% url "room_hide" room.id %}" class="badge badge-secondary">Hide Received</a>
-    {% endif %}
-    {% if request.resolver_match.url_name == 'room_hide' %}
-    <a href="{% url "room" room.id %}" class="badge badge-secondary">Show Received</a>
-    {% endif %}
+    <button type="button" id="toggle_btn" class="badge badge-secondary" onclick="toggle()">Hide Received</button>
     <br>
     <br>
     {% if object_list %}
@@ -38,7 +27,7 @@
       </thead>
       <tbody>
         {% for parcel in object_list %}
-        <tr>
+        <tr class="{% if parcel.date_received %}received{% endif %}">
           <th scope="row">{{ parcel.id }}</th>
           <td><a href="{% url "room" parcel.room.id %}">{{ parcel.room }}</a></td>
           <td>{{ parcel.sender }}</td>
@@ -90,4 +79,18 @@
         </div>
         {% endif %}
     {% endif %}
+
+    <script type="text/javascript">
+      var show = true
+      function toggle() {
+          show = !show
+          if (show) {
+            $('.received').show()
+            document.getElementById("toggle_btn").innerHTML = "Hide Received"
+          } else {
+            $('.received').hide()
+            document.getElementById("toggle_btn").innerHTML = "Show Received"
+          }
+      }
+    </script>
 {% endblock %}
