@@ -1,19 +1,24 @@
 import codecs
+import re
 from datetime import timedelta
 
 from django.core.mail import send_mail, EmailMessage
 from django.conf import settings
-from cryptography.fernet import Fernet
 
-f = Fernet(str.encode(settings.FERNET_KEY))
+key = settings.FERNET_KEY
 
 url = 'http://'+settings.APP_URL
 
 def encode(pk):
-    return codecs.encode(f.encrypt(str.encode(str(pk))),"hex").decode()
+    return codecs.encode(str.encode(str(pk)+key),"hex").decode()
 
 def decode(pk):
-    return int(f.decrypt(codecs.decode(str.encode(pk),"hex")))
+    try:
+        st = codecs.decode(str.encode(pk),"hex").decode('ascii')
+        st = re.sub(key,'',st)
+        return int(st)
+    except:
+        res = None
 
 def new_parcel_notification(resident):
     link = url+'/room/'+str(resident.room.number)

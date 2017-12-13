@@ -3,4 +3,3 @@ psycopg2
 gunicorn==19.3.0
 django-pgcrypto
 django-widget-tweaks
-cryptography>=1.7.1
